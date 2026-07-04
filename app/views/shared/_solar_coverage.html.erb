@@ -1,0 +1,10 @@
+<% if ratio %>
+  <div class="flex items-center gap-2">
+    <div class="h-1.5 w-16 rounded-full bg-slate-100">
+      <div class="h-1.5 rounded-full bg-amber-500" style="width: <%= [ ratio, 100 ].min %>%"></div>
+    </div>
+    <span><%= ratio %>%</span>
+  </div>
+<% else %>
+  <span class="text-slate-400">—</span>
+<% end %>

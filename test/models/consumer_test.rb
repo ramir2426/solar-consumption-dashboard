@@ -21,6 +21,19 @@ class ConsumerTest < ActiveSupport::TestCase
     assert_equal 0, create_consumer.average_daily_solar
   end
 
+  test "solar_coverage_ratio is the share of metered consumption covered by solar" do
+    consumer = create_consumer
+    consumer.daily_aggregates.create!(date: Date.new(2026, 6, 4), metering_total: 4.0, solar_total: 1.0)
+    consumer.daily_aggregates.create!(date: Date.new(2026, 6, 5), metering_total: 6.0, solar_total: 2.0)
+
+    # 3.0 kWh solar out of 10.0 kWh total metered consumption
+    assert_in_delta 30.0, consumer.solar_coverage_ratio, 0.0001
+  end
+
+  test "solar_coverage_ratio is nil rather than zero before there's any data" do
+    assert_nil create_consumer.solar_coverage_ratio
+  end
+
   test "ready_for_import? requires both a market and a metering location" do
     consumer = create_consumer
     assert consumer.ready_for_import?

@@ -33,4 +33,17 @@ class ConsumersControllerTest < ActionDispatch::IntegrationTest
 
     assert_select "a[href=?]", house_consumer_path(house, consumer), text: "Apartment A"
   end
+
+  test "csv format exports the daily rollup" do
+    house = create_house
+    consumer = create_consumer(house: house, name: "Apartment A")
+    consumer.daily_aggregates.create!(date: Date.new(2026, 6, 4), market_total: 1, metering_total: 2.5, solar_total: 1.5, complete: true)
+
+    get house_consumer_path(house, consumer, format: :csv)
+
+    assert_response :success
+    assert_equal "text/csv", response.media_type
+    assert_match(/apartment-a/, response.headers["Content-Disposition"])
+    assert_match "2026-06-04,1.0,2.5,1.5,true", response.body
+  end
 end

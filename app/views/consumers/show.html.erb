@@ -8,7 +8,7 @@
   Metering location <%= @consumer.metering_location&.location_id || "—" %>
 </p>
 
-<section class="mt-8 grid gap-4 sm:grid-cols-3">
+<section class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
   <div class="rounded-lg border border-slate-200 bg-white p-5">
     <p class="text-sm text-slate-500">Total solar consumption</p>
     <p class="mt-1 text-2xl font-semibold text-slate-900"><%= number_with_precision(@consumer.solar_total, precision: 2) %> <span class="text-base font-normal text-slate-400">kWh</span></p>
@@ -16,6 +16,17 @@
   <div class="rounded-lg border border-slate-200 bg-white p-5">
     <p class="text-sm text-slate-500">Average daily solar consumption</p>
     <p class="mt-1 text-2xl font-semibold text-slate-900"><%= number_with_precision(@consumer.average_daily_solar, precision: 2) %> <span class="text-base font-normal text-slate-400">kWh/day</span></p>
+  </div>
+  <div class="rounded-lg border border-slate-200 bg-white p-5">
+    <p class="text-sm text-slate-500">Solar coverage</p>
+    <% if (ratio = @consumer.solar_coverage_ratio) %>
+      <p class="mt-1 text-2xl font-semibold text-slate-900"><%= ratio %><span class="text-base font-normal text-slate-400">%</span></p>
+      <div class="mt-2.5 h-1.5 w-full rounded-full bg-slate-100">
+        <div class="h-1.5 rounded-full bg-amber-500" style="width: <%= [ ratio, 100 ].min %>%"></div>
+      </div>
+    <% else %>
+      <p class="mt-1 text-sm text-slate-400">No data imported yet</p>
+    <% end %>
   </div>
   <div class="rounded-lg border border-slate-200 bg-white p-5">
     <p class="text-sm text-slate-500">Timeframe</p>
@@ -29,7 +40,11 @@
 
 <% if @daily_aggregates.any? %>
   <section class="mt-6 rounded-lg border border-slate-200 bg-white p-5">
-    <h2 class="font-medium text-slate-900">Daily solar consumption</h2>
+    <div class="flex items-center justify-between">
+      <h2 class="font-medium text-slate-900">Daily solar consumption</h2>
+      <%= link_to "Export CSV", house_consumer_path(@house, @consumer, format: :csv),
+            class: "text-sm text-slate-500 hover:text-slate-900 hover:underline" %>
+    </div>
     <p class="text-xs text-slate-400">Amber bars mark days where the two locations didn't fully agree on reported intervals — hover a bar for the exact value.</p>
     <%= render "daily_chart", daily_aggregates: @daily_aggregates %>
   </section>

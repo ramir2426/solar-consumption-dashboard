@@ -16,6 +16,18 @@ class HouseTest < ActiveSupport::TestCase
     assert_in_delta 2.5, house.average_daily_solar, 0.0001
   end
 
+  test "solar_coverage_ratio is the share of metered consumption covered by solar" do
+    house = create_house
+    consumer = create_consumer(house: house)
+    consumer.daily_aggregates.create!(date: Date.new(2026, 6, 4), metering_total: 10.0, solar_total: 2.5)
+
+    assert_in_delta 25.0, house.solar_coverage_ratio, 0.0001
+  end
+
+  test "solar_coverage_ratio is nil rather than zero before there's any data" do
+    assert_nil create_house.solar_coverage_ratio
+  end
+
   test "timeframe reflects readings across all of a house's consumers" do
     house = create_house
     a = create_consumer(house: house, name: "A")

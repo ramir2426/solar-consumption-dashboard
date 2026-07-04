@@ -18,6 +18,16 @@ class House < ApplicationRecord
     solar_total / days
   end
 
+  # What share of the house's total metered consumption was covered by
+  # its own solar, as a percentage. nil (rather than 0) when there's
+  # nothing to divide by yet, so the UI can say "no data" instead of "0%".
+  def solar_coverage_ratio
+    metering_total = daily_aggregates.sum(:metering_total)
+    return nil if metering_total.zero?
+
+    (solar_total / metering_total * 100).round(1)
+  end
+
   # The date range the currently stored readings actually cover, based
   # on the raw interval data rather than the aggregates table, so it
   # stays accurate even for a house whose aggregates haven't rebuilt yet.

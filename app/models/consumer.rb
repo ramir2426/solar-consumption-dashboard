@@ -19,6 +19,15 @@ class Consumer < ApplicationRecord
     solar_total / days
   end
 
+  # What share of this consumer's total metered consumption came from
+  # solar, as a percentage. nil when there's nothing to divide by yet.
+  def solar_coverage_ratio
+    metering_total = daily_aggregates.sum(:metering_total)
+    return nil if metering_total.zero?
+
+    (solar_total / metering_total * 100).round(1)
+  end
+
   def timeframe
     from, to = Reading.joins(:location)
                        .where(locations: { consumer_id: id })

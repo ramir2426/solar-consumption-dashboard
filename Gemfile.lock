@@ -105,6 +105,7 @@ GEM
       bigdecimal
       rexml
     crass (1.0.7)
+    csv (3.3.5)
     date (3.5.1)
     debug (1.11.1)
       irb (~> 1.10)
@@ -420,6 +421,7 @@ DEPENDENCIES
   brakeman
   bundler-audit
   capybara
+  csv
   debug
   faraday (~> 2.12)
   faraday-retry (~> 2.2)

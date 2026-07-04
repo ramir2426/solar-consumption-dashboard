@@ -4,7 +4,7 @@
   timeframe = house.timeframe
 %>
 
-<section class="mt-8 grid gap-4 sm:grid-cols-3">
+<section class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
   <div class="rounded-lg border border-slate-200 bg-white p-5">
     <p class="text-sm text-slate-500">Total solar consumption</p>
     <p class="mt-1 text-2xl font-semibold text-slate-900"><%= number_with_precision(house.solar_total, precision: 2) %> <span class="text-base font-normal text-slate-400">kWh</span></p>
@@ -12,6 +12,17 @@
   <div class="rounded-lg border border-slate-200 bg-white p-5">
     <p class="text-sm text-slate-500">Average daily solar consumption</p>
     <p class="mt-1 text-2xl font-semibold text-slate-900"><%= number_with_precision(house.average_daily_solar, precision: 2) %> <span class="text-base font-normal text-slate-400">kWh/day</span></p>
+  </div>
+  <div class="rounded-lg border border-slate-200 bg-white p-5">
+    <p class="text-sm text-slate-500">Solar coverage</p>
+    <% if (ratio = house.solar_coverage_ratio) %>
+      <p class="mt-1 text-2xl font-semibold text-slate-900"><%= ratio %><span class="text-base font-normal text-slate-400">%</span></p>
+      <div class="mt-2.5 h-1.5 w-full rounded-full bg-slate-100">
+        <div class="h-1.5 rounded-full bg-amber-500" style="width: <%= [ ratio, 100 ].min %>%"></div>
+      </div>
+    <% else %>
+      <p class="mt-1 text-sm text-slate-400">No data imported yet</p>
+    <% end %>
   </div>
   <div class="rounded-lg border border-slate-200 bg-white p-5">
     <p class="text-sm text-slate-500">Timeframe</p>
@@ -59,6 +70,7 @@
           <th class="px-4 py-3">Consumer</th>
           <th class="px-4 py-3">Total solar consumption</th>
           <th class="px-4 py-3">Average daily</th>
+          <th class="px-4 py-3">Solar coverage</th>
           <th class="px-4 py-3">Data quality</th>
         </tr>
       </thead>
@@ -70,6 +82,7 @@
             </td>
             <td class="px-4 py-3 text-slate-700"><%= number_with_precision(consumer.solar_total, precision: 2) %> kWh</td>
             <td class="px-4 py-3 text-slate-700"><%= number_with_precision(consumer.average_daily_solar, precision: 2) %> kWh/day</td>
+            <td class="px-4 py-3 text-slate-700"><%= render "shared/solar_coverage", ratio: consumer.solar_coverage_ratio %></td>
             <td class="px-4 py-3">
               <% if consumer.daily_aggregates.empty? %>
                 <span class="text-slate-400">No data yet</span>

@@ -46,6 +46,9 @@ gem "image_processing", "~> 1.2"
 gem "faraday", "~> 2.12"
 gem "faraday-retry", "~> 2.2"
 
+# No longer a default gem as of Ruby 3.4; used for CSV export
+gem "csv"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
