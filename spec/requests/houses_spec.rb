@@ -47,6 +47,7 @@ RSpec.describe "Houses" do
 
       expect(response).to have_http_status(:success)
       expect(rendered).to have_css("p", text: "No data imported yet")
+      expect(rendered).not_to have_css("input[type=submit][value='Import data from API']")
     end
   end
 

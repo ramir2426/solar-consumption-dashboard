@@ -2,6 +2,11 @@ class ImportsController < ApplicationController
   def create
     house = House.find(params[:house_id])
 
+    if house.consumers.none?
+      return redirect_to house_path(house),
+        alert: "Add a consumer with a market and metering location before importing data."
+    end
+
     if house.imports.running.exists?
       return redirect_to house_path(house),
         alert: "An import is already running for this house — hang tight, the page updates on its own when it's done."

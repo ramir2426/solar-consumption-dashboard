@@ -40,7 +40,11 @@
     <%= render "houses/import_status", import: latest_import if latest_import %>
   </div>
 
-  <% if latest_import&.running? %>
+  <% if consumers.none? %>
+    <p class="mt-4 text-sm text-slate-500">
+      Add a consumer with a market and metering location before importing data.
+    </p>
+  <% elsif latest_import&.running? %>
     <p class="mt-4 text-sm text-slate-500">
       Fetching load-profile data since <%= latest_import.begin_date %>… this section refreshes on its own, no need to reload.
     </p>
