@@ -7,7 +7,7 @@ was covered by the building's shared solar system (a "GGV" —
 model). Built as a take-home for VREY.
 
 **Stack:** Ruby on Rails 8.1, PostgreSQL, Hotwire (Turbo + Stimulus),
-Tailwind CSS, Solid Queue/Cache/Cable, Minitest.
+Tailwind CSS, Solid Queue/Cache/Cable, RSpec.
 
 ## Getting started
 
@@ -26,8 +26,8 @@ numbers — the page updates itself over a Turbo Stream as it runs, no
 reload needed.
 
 ```
-bin/rails test                              # 47 tests
-bin/rubocop app config db test lib          # style (rubocop-rails-omakase)
+bundle exec rspec                           # 47 examples
+bin/rubocop app config db spec lib          # style (rubocop-rails-omakase)
 bin/brakeman                                # static security scan
 bin/bundler-audit check --update            # known-CVE gem scan
 ```

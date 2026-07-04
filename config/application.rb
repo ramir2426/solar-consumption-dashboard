@@ -29,5 +29,11 @@ module GgvApp
     config.time_zone = "Berlin"
 
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Generators (`rails g model ...`) should produce RSpec specs, not
+    # Minitest tests.
+    config.generators do |g|
+      g.test_framework :rspec, fixtures: false
+    end
   end
 end
