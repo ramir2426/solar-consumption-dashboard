@@ -65,7 +65,9 @@
       <tbody class="divide-y divide-slate-100">
         <% consumers.each do |consumer| %>
           <tr>
-            <td class="px-4 py-3 font-medium text-slate-900"><%= consumer.name %></td>
+            <td class="px-4 py-3 font-medium text-slate-900">
+              <%= link_to consumer.name, house_consumer_path(house, consumer), class: "hover:underline" %>
+            </td>
             <td class="px-4 py-3 text-slate-700"><%= number_with_precision(consumer.solar_total, precision: 2) %> kWh</td>
             <td class="px-4 py-3 text-slate-700"><%= number_with_precision(consumer.average_daily_solar, precision: 2) %> kWh/day</td>
             <td class="px-4 py-3">

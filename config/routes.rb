@@ -13,5 +13,6 @@ Rails.application.routes.draw do
 
   resources :houses, only: %i[index show] do
     resources :imports, only: %i[create]
+    resources :consumers, only: %i[show]
   end
 end

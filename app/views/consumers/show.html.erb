@@ -1,0 +1,71 @@
+<% content_for :title, "#{@consumer.name} — #{@house.name}" %>
+
+<%= link_to "← #{@house.name}", house_path(@house), class: "text-sm text-slate-500 hover:text-slate-700" %>
+
+<h1 class="mt-2 text-2xl font-semibold text-slate-900"><%= @consumer.name %></h1>
+<p class="text-sm text-slate-500">
+  Market location <%= @consumer.market_location&.location_id || "—" %> ·
+  Metering location <%= @consumer.metering_location&.location_id || "—" %>
+</p>
+
+<section class="mt-8 grid gap-4 sm:grid-cols-3">
+  <div class="rounded-lg border border-slate-200 bg-white p-5">
+    <p class="text-sm text-slate-500">Total solar consumption</p>
+    <p class="mt-1 text-2xl font-semibold text-slate-900"><%= number_with_precision(@consumer.solar_total, precision: 2) %> <span class="text-base font-normal text-slate-400">kWh</span></p>
+  </div>
+  <div class="rounded-lg border border-slate-200 bg-white p-5">
+    <p class="text-sm text-slate-500">Average daily solar consumption</p>
+    <p class="mt-1 text-2xl font-semibold text-slate-900"><%= number_with_precision(@consumer.average_daily_solar, precision: 2) %> <span class="text-base font-normal text-slate-400">kWh/day</span></p>
+  </div>
+  <div class="rounded-lg border border-slate-200 bg-white p-5">
+    <p class="text-sm text-slate-500">Timeframe</p>
+    <% if (timeframe = @consumer.timeframe)&.first %>
+      <p class="mt-1 text-sm font-medium text-slate-900"><%= timeframe.first.strftime("%b %-d, %Y") %> &ndash; <%= timeframe.last.strftime("%b %-d, %Y") %></p>
+    <% else %>
+      <p class="mt-1 text-sm text-slate-400">No data imported yet</p>
+    <% end %>
+  </div>
+</section>
+
+<% if @daily_aggregates.any? %>
+  <section class="mt-6 rounded-lg border border-slate-200 bg-white p-5">
+    <h2 class="font-medium text-slate-900">Daily solar consumption</h2>
+    <p class="text-xs text-slate-400">Amber bars mark days where the two locations didn't fully agree on reported intervals — hover a bar for the exact value.</p>
+    <%= render "daily_chart", daily_aggregates: @daily_aggregates %>
+  </section>
+
+  <section class="mt-6">
+    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+          <tr>
+            <th class="px-4 py-3">Date</th>
+            <th class="px-4 py-3">Market total</th>
+            <th class="px-4 py-3">Metering total</th>
+            <th class="px-4 py-3">Solar consumption</th>
+            <th class="px-4 py-3">Data quality</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <% @daily_aggregates.each do |row| %>
+            <tr>
+              <td class="px-4 py-3 font-medium text-slate-900"><%= row.date.strftime("%b %-d, %Y") %></td>
+              <td class="px-4 py-3 text-slate-700"><%= number_with_precision(row.market_total, precision: 2) %> kWh</td>
+              <td class="px-4 py-3 text-slate-700"><%= number_with_precision(row.metering_total, precision: 2) %> kWh</td>
+              <td class="px-4 py-3 font-medium text-slate-900"><%= number_with_precision(row.solar_total, precision: 2) %> kWh</td>
+              <td class="px-4 py-3">
+                <% if row.complete? %>
+                  <span class="text-emerald-600">Complete</span>
+                <% else %>
+                  <span class="text-amber-600"><%= row.market_reading_count %>/<%= row.metering_reading_count %> intervals matched</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<% else %>
+  <p class="mt-8 text-slate-500">No data imported yet for this consumer — import from the <%= link_to "house page", house_path(@house), class: "underline" %>.</p>
+<% end %>
