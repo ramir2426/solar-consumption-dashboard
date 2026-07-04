@@ -84,16 +84,24 @@ test:
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
+# Render's free plan only provisions one Postgres instance, so the extra
+# databases below live on that same instance (created by hand via `render
+# psql ... -c "CREATE DATABASE ..."`) rather than as separate Render
+# resources. Deriving their URLs from DATABASE_URL keeps host/user/password
+# in one place instead of wiring up three more secrets.
 production:
   primary: &primary_production
     <<: *default
     url: <%= ENV["DATABASE_URL"] %>
   cache:
     <<: *primary_production
+    url: <%= ENV["DATABASE_URL"]&.sub(%r{/[^/?]+(\?.*)?\z}, '/ggv_app_production_cache\1') %>
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
+    url: <%= ENV["DATABASE_URL"]&.sub(%r{/[^/?]+(\?.*)?\z}, '/ggv_app_production_queue\1') %>
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
+    url: <%= ENV["DATABASE_URL"]&.sub(%r{/[^/?]+(\?.*)?\z}, '/ggv_app_production_cable\1') %>
     migrations_paths: db/cable_migrate
