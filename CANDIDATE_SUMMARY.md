@@ -30,6 +30,38 @@ The two decisions I spent the most time on:
    kWh total, the performance path for the aggregation table) over
    trying to touch all four superficially.
 
+## Feedback on the challenge itself, since you asked
+
+Martin, you mentioned being curious how this worked for one of the first
+people to see it — a few honest, specific notes in that spirit, meant as
+useful signal rather than complaint:
+
+- The one place I genuinely couldn't resolve on my own, and would have
+  liked a line in the doc for, is the *direction* of "the difference of
+  the values of the two locations" — is metering meant to be ≥ market
+  (metering = real draw, market = grid-settled residual), or the other
+  way round? I made a defensible, documented assumption (see the
+  README), but this is the one spot where I'd genuinely want to compare
+  notes rather than just present my guess.
+- Worth double-checking on your end: the mock API doesn't reliably echo
+  back the `locationId` you requested (I saw it return the literal,
+  unsubstituted `":location_id"` placeholder). It's a fine thing for a
+  candidate to have to notice and design around — I did — but if that
+  wasn't intentional on the mock service's part, it's worth knowing
+  about.
+- "Houses using GGV" assumes the reader already knows GGV means
+  *gemeinschaftliche Gebäudeversorgung* and can connect that to the
+  market/metering-location (MaLo/Melo) terminology. That connection is
+  probably obvious inside VREY; it's not necessarily obvious to every
+  candidate you'll see this challenge, especially anyone without German
+  energy-market background — might be worth one clarifying sentence for
+  a broader candidate pool.
+- The four-hour guideline and the size of the optional list are in real
+  tension once you start seriously attempting more than one or two of
+  them (each optional task is reasonably scoped on its own, but "pick
+  from four, plus polish, plus a summary" adds up). Not a complaint —
+  just a data point on calibration if you iterate on this doc.
+
 ## How I approached it
 
 - Read the data through by hand first (the sample response you gave,
@@ -56,7 +88,8 @@ The two decisions I spent the most time on:
 
 - The GGV/market-location/metering-location assumption above — whether
   my reading of which side of the subtraction is which matches how
-  it actually works for VREY.
+  it actually works for VREY. (Happy to ask this one ahead of time
+  rather than wait for the interview, if that's useful to you.)
 - Where I drew the line on scope, and whether that matches what you'd
   want to see from someone in this role.
 - The performance tradeoffs section in the README, and what actually

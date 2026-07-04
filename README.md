@@ -118,6 +118,13 @@ import form — so it stays honest even if an import partially failed.
 - **Base app**: house list → house page with an import form, live
   status (Turbo Streams), and per-consumer + house-level total solar
   consumption, average daily solar consumption, and covered timeframe.
+  The house list itself is sorted by solar coverage, worst first, rather
+  than alphabetically — for a company managing many GGV houses, "which
+  buildings need attention" is a more useful default than an arbitrary
+  list (one query across every house via `ConsumerDailyAggregate`, not
+  one query per house). The import button also refuses to start a second
+  run while one's already in flight for that house, rather than letting
+  a double-click spin up duplicate API calls.
 - **Consumer's daily** (bonus): click a consumer's name for a dedicated
   page — a small dependency-free SVG bar chart of daily solar
   consumption plus the exact numbers in a table. No JS charting library;

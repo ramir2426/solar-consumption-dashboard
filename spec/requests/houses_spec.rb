@@ -10,6 +10,21 @@ RSpec.describe "Houses" do
       expect(response).to have_http_status(:success)
       expect(rendered).to have_link("Musterstraße 12")
     end
+
+    it "sorts houses by solar coverage, worst first, with no-data houses last" do
+      worst = create_house(name: "Worst House")
+      create_consumer(house: worst).daily_aggregates.create!(date: Date.new(2026, 6, 4), metering_total: 10.0, solar_total: 2.0) # 20%
+
+      best = create_house(name: "Best House")
+      create_consumer(house: best).daily_aggregates.create!(date: Date.new(2026, 6, 4), metering_total: 10.0, solar_total: 8.0) # 80%
+
+      no_data = create_house(name: "No Data House")
+
+      get houses_path
+
+      positions = [ worst, best, no_data ].map { |house| response.body.index(house.name) }
+      expect(positions).to eq(positions.sort)
+    end
   end
 
   describe "GET /houses/:id" do

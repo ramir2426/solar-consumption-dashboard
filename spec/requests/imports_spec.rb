@@ -29,5 +29,27 @@ RSpec.describe "Imports" do
 
       expect(house.imports.last.begin_date).to eq(Date.current)
     end
+
+    it "refuses to start a second import while one is already running for the same house" do
+      house = create_house
+      house.imports.create!(begin_date: Date.new(2026, 6, 4), status: :running)
+
+      expect do
+        post house_imports_path(house), params: { begin_date: "2026-06-04" }
+      end.not_to have_enqueued_job(ImportHouseJob)
+
+      expect(house.imports.count).to eq(1)
+      expect(response).to redirect_to(house_path(house))
+      expect(flash[:alert]).to match(/already running/)
+    end
+
+    it "allows a new import once the previous one has finished" do
+      house = create_house
+      house.imports.create!(begin_date: Date.new(2026, 6, 4), status: :completed)
+
+      expect do
+        post house_imports_path(house), params: { begin_date: "2026-06-04" }
+      end.to have_enqueued_job(ImportHouseJob)
+    end
   end
 end

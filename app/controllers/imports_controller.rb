@@ -1,6 +1,12 @@
 class ImportsController < ApplicationController
   def create
     house = House.find(params[:house_id])
+
+    if house.imports.running.exists?
+      return redirect_to house_path(house),
+        alert: "An import is already running for this house — hang tight, the page updates on its own when it's done."
+    end
+
     import = house.imports.create!(begin_date: begin_date)
     ImportHouseJob.perform_later(import.id)
 
