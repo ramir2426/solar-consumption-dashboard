@@ -24,14 +24,16 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # config.assume_ssl = true
+  # Kamal's proxy terminates TLS and forwards to the app over plain HTTP
+  # on the private network, so the app needs to be told SSL is already
+  # in place rather than trying to negotiate it itself.
+  config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  config.force_ssl = true
 
   # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]
@@ -42,6 +44,12 @@ Rails.application.configure do
 
   # Prevent health checks from clogging up the logs.
   config.silence_healthcheck_path = "/up"
+
+  # One tagged line per request instead of Rails' multi-line default --
+  # much easier to search once it's shipped somewhere like Better Stack /
+  # Papertrail / Axiom instead of just STDOUT. See the README's
+  # "Logging & monitoring" section.
+  config.lograge.enabled = true
 
   # Don't log any deprecations.
   config.active_support.report_deprecations = false
