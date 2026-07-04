@@ -100,7 +100,27 @@ RSpec.describe "Consumers" do
       end.not_to change(Consumer, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
-      expect(rendered).to have_css(".text-red-700")
+      # Each error names which location it's about -- not just "location
+      # must be exactly 10 digits" with two "location" fields on screen
+      # and no way to tell which one that refers to.
+      expect(rendered).to have_css(".text-red-700", text: /Market location ID must be exactly 10 digits/)
+      expect(rendered).to have_css(".text-red-700", text: /Metering location ID must be exactly 33 characters/)
+      expect(rendered).to have_css(".text-red-600", text: "Market location ID must be exactly 10 digits")
+      expect(rendered).to have_css(".text-red-600", text: "Metering location ID must be exactly 33 characters")
+    end
+  end
+
+  describe "DELETE /houses/:house_id/consumers/:id" do
+    it "deletes the consumer and its locations, and redirects to the house" do
+      house = create_house
+      consumer = create_consumer(house: house, name: "Apartment A")
+
+      expect do
+        delete house_consumer_path(house, consumer)
+      end.to change(Consumer, :count).by(-1).and change(Location, :count).by(-2)
+
+      expect(response).to redirect_to(house_path(house))
+      expect(Consumer.exists?(consumer.id)).to be false
     end
   end
 end

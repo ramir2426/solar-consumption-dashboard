@@ -27,6 +27,12 @@ class ConsumersController < ApplicationController
     end
   end
 
+  def destroy
+    consumer = @house.consumers.find(params[:id])
+    consumer.destroy
+    redirect_to house_path(@house), notice: "#{consumer.name} and all of its imported data were deleted."
+  end
+
   private
 
   def set_house

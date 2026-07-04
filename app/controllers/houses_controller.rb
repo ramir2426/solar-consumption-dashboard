@@ -41,6 +41,12 @@ class HousesController < ApplicationController
     end
   end
 
+  def destroy
+    house = House.find(params[:id])
+    house.destroy
+    redirect_to houses_path, notice: "#{house.name} and all of its data were deleted."
+  end
+
   private
 
   def house_params

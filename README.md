@@ -127,16 +127,23 @@ import form — so it stays honest even if an import partially failed.
   a double-click spin up duplicate API calls.
 - **Managing houses and consumers**: houses and consumers were originally
   seed/console-only; there are now proper forms (`/houses/new`,
-  `/houses/:id/edit`, `/houses/:id/consumers/new`). Creating a consumer
-  sets up its market *and* metering location in the same submit —
-  `accepts_nested_attributes_for`, not a two-step flow — since a
+  `/houses/:id/edit`, `/houses/:id/consumers/new`), plus delete, each
+  behind a confirm dialog since both cascade (deleting a house takes
+  every consumer, location, reading, and import with it). Creating a
+  consumer sets up its market *and* metering location in the same submit
+  — `accepts_nested_attributes_for`, not a two-step flow — since a
   consumer isn't really usable for import until both exist anyway (see
-  `Consumer#ready_for_import?`). There's deliberately no concept of
-  multiple clients/tenants each owning their own houses yet: the moment
-  that's real, this app also needs real authentication and per-client
-  data scoping (right now anyone who can reach it sees every house),
-  which is a deliberate next step rather than something to bolt on
-  quietly as a side effect of a CRUD form.
+  `Consumer#ready_for_import?`). Location validation errors are attached
+  to `:base` with the role spelled out in the message ("Market location
+  ID must be exactly 10 digits") rather than the default `:location_id`
+  attribute — with a market *and* a metering field on screen at once,
+  "location must be exactly 10 digits" on its own doesn't say which one
+  it's about. There's deliberately no concept of multiple clients/
+  tenants each owning their own houses yet: the moment that's real, this
+  app also needs real authentication and per-client data scoping (right
+  now anyone who can reach it sees every house), which is a deliberate
+  next step rather than something to bolt on quietly as a side effect of
+  a CRUD form.
 - **Consumer's daily** (bonus): click a consumer's name for a dedicated
   page — a small dependency-free SVG bar chart of daily solar
   consumption plus the exact numbers in a table. No JS charting library;

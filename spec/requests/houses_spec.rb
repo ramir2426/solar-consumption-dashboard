@@ -110,4 +110,18 @@ RSpec.describe "Houses" do
       expect(response).to have_http_status(:unprocessable_content)
     end
   end
+
+  describe "DELETE /houses/:id" do
+    it "deletes the house and everything under it, and redirects to the house list" do
+      house = create_house(name: "Gone soon")
+      consumer = create_consumer(house: house)
+
+      expect do
+        delete house_path(house)
+      end.to change(House, :count).by(-1).and change(Consumer, :count).by(-1).and change(Location, :count).by(-2)
+
+      expect(response).to redirect_to(houses_path)
+      expect(Consumer.exists?(consumer.id)).to be false
+    end
+  end
 end
