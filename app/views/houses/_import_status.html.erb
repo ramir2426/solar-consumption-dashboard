@@ -1,0 +1,12 @@
+<%
+  badge_colors = {
+    "pending" => "bg-slate-100 text-slate-600",
+    "running" => "bg-blue-50 text-blue-700",
+    "completed" => "bg-emerald-50 text-emerald-700",
+    "partial" => "bg-amber-50 text-amber-700",
+    "failed" => "bg-red-50 text-red-700"
+  }
+%>
+<span class="rounded-full px-2.5 py-1 text-xs font-medium <%= badge_colors.fetch(import.status, "bg-slate-100 text-slate-600") %>">
+  <%= import.status.humanize %>
+</span>

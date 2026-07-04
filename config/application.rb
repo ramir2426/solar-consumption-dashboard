@@ -21,7 +21,13 @@ module GgvApp
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
-    # config.time_zone = "Central Time (US & Canada)"
+    # The measurement API reports everything in Europe/Berlin local time
+    # (interval timestamps come back with a +01:00/+02:00 offset); matching
+    # the app's zone to it means dates shown in the UI line up with the
+    # date range someone actually typed into the import form, instead of
+    # silently drifting by a day around UTC midnight.
+    config.time_zone = "Berlin"
+
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end

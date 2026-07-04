@@ -1,0 +1,22 @@
+<% content_for :title, "Houses — GGV Energy" %>
+
+<h1 class="text-2xl font-semibold text-slate-900">Houses</h1>
+<p class="mt-1 text-slate-500">Pick a house to see its solar consumption.</p>
+
+<ul class="mt-8 divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
+  <% @houses.each do |house| %>
+    <li>
+      <%= link_to house_path(house), class: "flex items-center justify-between px-5 py-4 hover:bg-slate-50" do %>
+        <div>
+          <p class="font-medium text-slate-900"><%= house.name %></p>
+          <p class="text-sm text-slate-500"><%= pluralize(house.consumers.count, "consumer") %></p>
+        </div>
+        <span class="text-slate-400">&rarr;</span>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+
+<% if @houses.empty? %>
+  <p class="mt-6 text-slate-500">No houses yet — run <code class="rounded bg-slate-100 px-1.5 py-0.5">bin/rails db:seed</code> to create some.</p>
+<% end %>
