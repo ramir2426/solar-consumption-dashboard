@@ -1,0 +1,9 @@
+<% content_for :title, "New house — GGV Energy" %>
+
+<%= link_to "← All houses", houses_path, class: "text-sm text-slate-500 hover:text-slate-700" %>
+
+<h1 class="mt-2 text-2xl font-semibold text-slate-900">New house</h1>
+
+<div class="mt-8 max-w-md">
+  <%= render "form", house: @house %>
+</div>

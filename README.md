@@ -125,6 +125,18 @@ import form — so it stays honest even if an import partially failed.
   one query per house). The import button also refuses to start a second
   run while one's already in flight for that house, rather than letting
   a double-click spin up duplicate API calls.
+- **Managing houses and consumers**: houses and consumers were originally
+  seed/console-only; there are now proper forms (`/houses/new`,
+  `/houses/:id/edit`, `/houses/:id/consumers/new`). Creating a consumer
+  sets up its market *and* metering location in the same submit —
+  `accepts_nested_attributes_for`, not a two-step flow — since a
+  consumer isn't really usable for import until both exist anyway (see
+  `Consumer#ready_for_import?`). There's deliberately no concept of
+  multiple clients/tenants each owning their own houses yet: the moment
+  that's real, this app also needs real authentication and per-client
+  data scoping (right now anyone who can reach it sees every house),
+  which is a deliberate next step rather than something to bolt on
+  quietly as a side effect of a CRUD form.
 - **Consumer's daily** (bonus): click a consumer's name for a dedicated
   page — a small dependency-free SVG bar chart of daily solar
   consumption plus the exact numbers in a table. No JS charting library;
@@ -232,6 +244,22 @@ Kubernetes yet):
   reaches the page).
 - **Multi-currency/unit awareness** if this ever needs to show anything
   besides kWh.
+- **Multiple clients, each owning their own houses, plus real
+  authentication.** Right now this is a single-tenant admin tool with no
+  login at all. A `Client` above `House` (`Client has_many :houses`) is
+  a cheap data-model change; the real work is everything that has to
+  come with it once it's real — accounts, sessions, and scoping every
+  query (starting with the houses index we just built) to "what this
+  logged-in user is allowed to see." I'd treat that as its own deliberate
+  piece of work, not something to fold into a CRUD-forms task.
+- **A separate tenant-facing view.** "Each consumer can check their own
+  consumption" implies a second user role entirely — a tenant who logs
+  in and sees *only* their own apartment, never the other consumers in
+  the same house the ops dashboard deliberately shows side by side. That
+  wants its own narrower surface built on top of the auth above, plus a
+  real answer for how a tenant's login gets linked to their `Consumer`
+  record in the first place (self-signup vs. an invite from the property
+  manager) — a product decision, not just a technical one.
 - I'd also want an actual conversation with whoever owns the GGV/MaLo/
   Melo domain knowledge to check the solar-difference assumption above
   against how the real metering setup works, rather than my best

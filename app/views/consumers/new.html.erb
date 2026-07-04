@@ -1,0 +1,30 @@
+<% content_for :title, "New consumer — #{@house.name}" %>
+
+<%= link_to "← #{@house.name}", house_path(@house), class: "text-sm text-slate-500 hover:text-slate-700" %>
+
+<h1 class="mt-2 text-2xl font-semibold text-slate-900">New consumer</h1>
+
+<div class="mt-8 max-w-md">
+  <%= render "shared/errors", record: @consumer %>
+
+  <%= form_with model: [ @house, @consumer ], class: "space-y-4" do |f| %>
+    <div>
+      <%= f.label :name, class: "block text-sm font-medium text-slate-700" %>
+      <%= f.text_field :name, class: "mt-1 w-full rounded-md border-slate-300 text-sm shadow-sm", autofocus: true %>
+    </div>
+
+    <%= f.fields_for :locations do |lf| %>
+      <div>
+        <% if lf.object.market? %>
+          <%= lf.label :location_id, "Market location ID (10 digits)", class: "block text-sm font-medium text-slate-700" %>
+        <% else %>
+          <%= lf.label :location_id, "Metering location ID (33 characters)", class: "block text-sm font-medium text-slate-700" %>
+        <% end %>
+        <%= lf.hidden_field :location_type %>
+        <%= lf.text_field :location_id, class: "mt-1 w-full rounded-md border-slate-300 text-sm shadow-sm font-mono" %>
+      </div>
+    <% end %>
+
+    <%= f.submit class: "rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 cursor-pointer" %>
+  <% end %>
+</div>

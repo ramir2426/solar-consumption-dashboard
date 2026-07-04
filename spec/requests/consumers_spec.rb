@@ -50,4 +50,57 @@ RSpec.describe "Consumers" do
       end
     end
   end
+
+  describe "GET /houses/:house_id/consumers/new" do
+    it "renders the form with a market and a metering field" do
+      house = create_house
+
+      get new_house_consumer_path(house)
+
+      expect(response).to have_http_status(:success)
+      expect(rendered).to have_css("input[value='market']", visible: :all)
+      expect(rendered).to have_css("input[value='metering']", visible: :all)
+    end
+  end
+
+  describe "POST /houses/:house_id/consumers" do
+    it "creates the consumer with both locations in one submit" do
+      house = create_house
+
+      expect do
+        post house_consumers_path(house), params: {
+          consumer: {
+            name: "Apartment C",
+            locations_attributes: {
+              "0" => { location_type: "market", location_id: "5033000009" },
+              "1" => { location_type: "metering", location_id: "DE0009999999999999999999999999999" }
+            }
+          }
+        }
+      end.to change(Consumer, :count).by(1).and change(Location, :count).by(2)
+
+      consumer = house.consumers.find_by!(name: "Apartment C")
+      expect(consumer).to be_ready_for_import
+      expect(response).to redirect_to(house_path(house))
+    end
+
+    it "re-renders the form with errors and saves nothing when a location id is invalid" do
+      house = create_house
+
+      expect do
+        post house_consumers_path(house), params: {
+          consumer: {
+            name: "Bad Apartment",
+            locations_attributes: {
+              "0" => { location_type: "market", location_id: "123" },
+              "1" => { location_type: "metering", location_id: "too-short" }
+            }
+          }
+        }
+      end.not_to change(Consumer, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(rendered).to have_css(".text-red-700")
+    end
+  end
 end

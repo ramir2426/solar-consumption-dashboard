@@ -1,7 +1,12 @@
 <% content_for :title, "Houses — GGV Energy" %>
 
-<h1 class="text-2xl font-semibold text-slate-900">Houses</h1>
-<p class="mt-1 text-slate-500">Sorted by solar coverage, lowest first — the buildings most worth a look.</p>
+<div class="flex items-start justify-between">
+  <div>
+    <h1 class="text-2xl font-semibold text-slate-900">Houses</h1>
+    <p class="mt-1 text-slate-500">Sorted by solar coverage, lowest first — the buildings most worth a look.</p>
+  </div>
+  <%= link_to "New house", new_house_path, class: "rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700" %>
+</div>
 
 <ul class="mt-8 divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
   <% @houses.each do |house| %>

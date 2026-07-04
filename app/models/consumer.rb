@@ -6,6 +6,11 @@ class Consumer < ApplicationRecord
   has_one :market_location, -> { market }, class_name: "Location", inverse_of: :consumer
   has_one :metering_location, -> { metering }, class_name: "Location", inverse_of: :consumer
 
+  # Lets the "new consumer" form create the consumer and both of its
+  # locations (market + metering) in one submit -- a Consumer isn't
+  # really usable without both anyway (see #ready_for_import?).
+  accepts_nested_attributes_for :locations
+
   validates :name, presence: true
 
   def solar_total

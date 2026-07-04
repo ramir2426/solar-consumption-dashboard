@@ -13,7 +13,39 @@ class HousesController < ApplicationController
     @house = House.find(params[:id])
   end
 
+  def new
+    @house = House.new
+  end
+
+  def create
+    @house = House.new(house_params)
+
+    if @house.save
+      redirect_to house_path(@house), notice: "#{@house.name} added."
+    else
+      render :new, status: :unprocessable_content
+    end
+  end
+
+  def edit
+    @house = House.find(params[:id])
+  end
+
+  def update
+    @house = House.find(params[:id])
+
+    if @house.update(house_params)
+      redirect_to house_path(@house), notice: "Saved."
+    else
+      render :edit, status: :unprocessable_content
+    end
+  end
+
   private
+
+  def house_params
+    params.require(:house).permit(:name)
+  end
 
   # One aggregate query across every house instead of calling
   # House#solar_coverage_ratio per row (which would be an N+1 -- two

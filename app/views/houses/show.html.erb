@@ -1,8 +1,12 @@
 <% content_for :title, "#{@house.name} — GGV Energy" %>
 
-<%= link_to "← All houses", houses_path, class: "text-sm text-slate-500 hover:text-slate-700" %>
-
-<h1 class="mt-2 text-2xl font-semibold text-slate-900"><%= @house.name %></h1>
+<div class="flex items-start justify-between">
+  <div>
+    <%= link_to "← All houses", houses_path, class: "text-sm text-slate-500 hover:text-slate-700" %>
+    <h1 class="mt-2 text-2xl font-semibold text-slate-900"><%= @house.name %></h1>
+  </div>
+  <%= link_to "Edit", edit_house_path(@house), class: "text-sm text-slate-500 hover:text-slate-900 hover:underline" %>
+</div>
 
 <%= turbo_stream_from @house %>
 

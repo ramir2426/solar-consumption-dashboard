@@ -11,8 +11,8 @@ Rails.application.routes.draw do
 
   root "houses#index"
 
-  resources :houses, only: %i[index show] do
+  resources :houses, only: %i[index show new create edit update] do
     resources :imports, only: %i[create]
-    resources :consumers, only: %i[show]
+    resources :consumers, only: %i[show new create]
   end
 end

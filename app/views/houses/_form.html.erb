@@ -1,0 +1,10 @@
+<%= render "shared/errors", record: house %>
+
+<%= form_with model: house, class: "space-y-4" do |f| %>
+  <div>
+    <%= f.label :name, class: "block text-sm font-medium text-slate-700" %>
+    <%= f.text_field :name, class: "mt-1 w-full rounded-md border-slate-300 text-sm shadow-sm", autofocus: true %>
+  </div>
+
+  <%= f.submit class: "rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 cursor-pointer" %>
+<% end %>
