@@ -8,6 +8,14 @@
 class ImportHouseJob < ApplicationJob
   queue_as :default
 
+  # Keeps a single INSERT ... ON CONFLICT statement from growing without
+  # bound on a long backfill (a first-time import going back a year is
+  # ~35k rows per location). 1_000 rows * 5 columns stays comfortably
+  # under Postgres's ~65k bind-parameter ceiling per statement, with
+  # plenty of headroom, while still being large enough that we're not
+  # round-tripping to the database for every single row.
+  UPSERT_BATCH_SIZE = 1_000
+
   def perform(import_id)
     import = Import.find(import_id)
     import.update!(status: :running, started_at: Time.current)
@@ -63,17 +71,19 @@ class ImportHouseJob < ApplicationJob
     intervals = client.load_profile(location_id: location.location_id, begin_date: begin_date)
     return if intervals.empty?
 
-    rows = intervals.map do |interval|
-      {
-        location_id: location.id,
-        starts_at: interval.starts_at,
-        ends_at: interval.ends_at,
-        value: interval.value,
-        quality: interval.quality
-      }
-    end
+    intervals.each_slice(UPSERT_BATCH_SIZE) do |batch|
+      rows = batch.map do |interval|
+        {
+          location_id: location.id,
+          starts_at: interval.starts_at,
+          ends_at: interval.ends_at,
+          value: interval.value,
+          quality: interval.quality
+        }
+      end
 
-    Reading.upsert_all(rows, unique_by: %i[location_id starts_at])
+      Reading.upsert_all(rows, unique_by: %i[location_id starts_at])
+    end
   end
 
   def client
